@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 import pandas as pd
+from util.junta import concatenar_csv
 
 # ======================================================
 # Configura e abre o navegador
@@ -250,7 +251,7 @@ def baixar_itens_tabela(driver, wait, download_dir, falhas):
 # Função principal
 # ======================================================
 def executar_downloads():
-    lista = ["fonte", "despesa", "programa","orgao", "fornecedor", "n_empenho"]
+    lista = ["n_empenho","fonte", "despesa", "programa","orgao", "fornecedor"]
     UF = "AC"
     ano = 2025
 
@@ -284,7 +285,18 @@ def executar_downloads():
         else:
             print(f"✅ Nenhuma falha registrada para '{item}'.")
 
-
+        # ==================================================
+        # 🔹 Executa a concatenação automática após o download
+        # ==================================================
+        try:
+            print(f"\n🔄 Iniciando concatenação automática para {item}/{UF}/{ano}...")
+            arquivo_final = concatenar_csv(pasta)
+            if arquivo_final:
+                print(f"✅ Concatenação concluída com sucesso: {arquivo_final}")
+            else:
+                print(f"⚠️ Nenhum arquivo válido encontrado em {pasta_despesa}.")
+        except Exception as e:
+            print(f"❌ Erro ao concatenar arquivos CSV: {e}")
 
 # ======================================================
 # Execução
